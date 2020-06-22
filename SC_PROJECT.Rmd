@@ -1,0 +1,180 @@
+---
+title: "EATING ATTITUDE AND HEALTHY LIFE SURVEY ANALYSIS"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##INTRODUCTION
+
+The aim of this study is to determine the eating attitudes of the people and their orientation towards healthy living. Eating attitudes are examined in terms of the demographic characteristics of the people. In this questionnaire, the attitudes of people were examined in terms of gender, age, education level, marital status, and region of residence.
+
+##DESRIPTION OF PROBLEM
+
+Accurate eating habits gained at a young age can prevent or reduce the diseases encountered in later ages. Orientation to a healthy life should be the priority of all people. The general purpose of this project is eating attitudes.
+
+##DESRIPTION OF DATA
+As a result of a 30-person survey, we have 30 objects and 14 variables.
+We have 5 demographic variables. These;
+gender,
+age,
+educational status,
+material status,
+region
+
+##PROGRESS
+
+Manipulation: The whole data set was digitized.
+that;
+
+always = 4,
+often = 3,
+sometimes = 2,
+never = 1
+
+All demographic values has changed as factor.
+
+As final, SUM column added for analyzing survey success.
+
+```{R}
+
+MyData <- read.csv(file="C:/Users/Hp/Desktop/Survey_datas.csv", header=T, sep=",")
+MyData$AGE = cut(MyData$AGE, breaks = c(0,35,50),labels = c("YOUNG","OLD"))
+
+Sum= data.frame(MyData$Q1+MyData$Q2+MyData$Q4+MyData$Q5+MyData$Q6+MyData$Q7+MyData$Q8+MyData$Q9)
+colnames(Sum)=c("SUM")
+MyData = cbind(MyData,Sum)
+
+
+```
+
+## Including Plots
+
+Survey data were analyzed using plots, for example:
+
+```{r}
+library(ggplot2)
+
+ggplot(MyData, aes(x = MyData$AGE , y = MyData$SUM)) +
+  geom_boxplot(color="black") 
+
+```
+In this graph, it seems when age is increase, the success of survey is decrease.
+
+```{r}
+qplot(x=MyData$GENDER,y=MyData$SUM,
+      geom = "boxplot", data = MyData
+      )
+```
+In this graph, it seems fameles are more successful than males.We can say that females are trying live healthy more than males.
+
+## HYPOTHESIS TESTING
+
+##ONE SAMPLE T-TEST
+
+One sample t-test for ???SUM??? which is rowsam of survey results. Lets assume that the mean is 20
+a) Ho = m1=20
+Ha = m1 > 20
+b) Test the hypothesis for 95% confidence level:
+
+```{r}
+mean(MyData$SUM)
+t.test(MyData$SUM,alternative = "greater", mu = 20)
+```
+p-value < 0,05 ??? Reject Ho.
+
+## TWO SAMPLE T-TEST
+1)GENDER
+```{r}
+
+t.test(MyData$SUM~GENDER, data=MyData)
+```
+p-value > 0,005 ??? Not reject null hypothesis.
+
+
+2)AGE
+```{r}
+
+t.test(MyData$SUM~AGE, data=MyData)
+```
+p-value > 0,005 ??? Not reject null hypothesis.
+
+##ANOVA
+1)EDUCATION
+
+```{r}
+output <- aov(MyData$SUM~EDUCATION, data=MyData)
+summary(output)
+TukeyHSD(output)
+
+```
+It seems that these 3 groups are same. 
+
+
+2)REGION
+```{r}
+
+output2 <- aov(MyData$SUM~REGION, data=MyData)
+summary(output2)
+TukeyHSD(output2)
+```
+
+It seems that these 3 groups are same. 
+
+
+##CONCLUSION 
+
+
+As a result, people's eating attitudes and orientations towards healthy living were examined according to factors.
+
+ There are many things that affect it. Initially, detected
+The most effective factor was gender. According to the statistical data, the most effective gender factor was female and the success rates were higher than men.
+
+
+## APPEND
+
+
+
+
+
+```{r}
+
+
+MyData <- read.csv(file="C:/Users/Hp/Desktop/Survey_datas.csv", header=T, sep=",")
+MyData$AGE = cut(MyData$AGE, breaks = c(15,30,80),labels = c("YOUNG","OLD"))
+
+Sum= data.frame(MyData$Q1+MyData$Q2+MyData$Q4+MyData$Q5+MyData$Q6+MyData$Q7+MyData$Q8+MyData$Q9)
+colnames(Sum)=c("SUM")
+MyData = cbind(MyData,Sum)
+
+
+
+library(ggplot2)
+
+ggplot(MyData, aes(x = MyData$AGE , y = MyData$SUM)) +
+  geom_boxplot(color="black") 
+
+
+qplot(x=MyData$GENDER,y=MyData$SUM,
+      geom = "boxplot", data = MyData
+      )
+
+
+
+
+t.test(MyData$SUM~GENDER, data=MyData)
+
+t.test(MyData$SUM~AGE, data=MyData)
+
+output <- aov(MyData$SUM~EDUCATION, data=MyData)
+summary(output)
+TukeyHSD(output)
+
+output2 <- aov(MyData$SUM~REGION, data=MyData)
+summary(output2)
+TukeyHSD(output2)
+
+```
+
